@@ -1,0 +1,36 @@
+name: GitHub Action Name
+description: A GitHub Action Descriptionto Open a specified GitHub issue using the GitHub API
+author: Lee Lott
+
+inputs:
+  input-1:
+    description: 'Description of input'
+    required: true
+  input-2:
+    description: 'Description of input'
+    required: true
+  input-3:
+    description: 'Description of input'
+    required: true
+
+outputs:
+  result:
+    description: 'Result of the action ("success" or "failure")'
+    value: ${{ steps.action.outputs.result }}
+  error-message:
+    description: 'Error message if the action fails'
+    value: ${{ steps.action.outputs.error-message }}
+
+runs:
+  using: composite
+  steps:
+    - name: Action Name
+      id: action
+      shell: pwsh
+      run: |        
+        . "${{ github.action_path }}/action.ps1"
+        run_action `
+          -Input1 "${{ inputs.input-1 }}" `
+          -Input2 "${{ inputs.input-2 }}" `
+          -Inpute3 "${{ inputs.input-3 }}" `
+      
