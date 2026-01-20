@@ -1,36 +1,39 @@
-name: GitHub Action Name
-description: A GitHub Action Descriptionto Open a specified GitHub issue using the GitHub API
+name: "Delete Git Tag from Repository"
+description: "Delete a git tag using GitHub API"
 author: Lee Lott
 
 inputs:
-  input-1:
-    description: 'Description of input'
+  tag-name:
+    description: 'Name of the tag to create'
     required: true
-  input-2:
-    description: 'Description of input'
+  org-name:
+    description: 'The name of the GitHub organization'
     required: true
-  input-3:
-    description: 'Description of input'
+  repo-name:
+    description: 'The name of the repository'
+    required: true
+  token:
+    description:  'GitHub token with access to Git tags'
     required: true
 
 outputs:
   result:
-    description: 'Result of the action ("success" or "failure")'
+    description: 'Result of the attempt to delete the git tag ("success", "not-found" or "failure")'
     value: ${{ steps.action.outputs.result }}
   error-message:
     description: 'Error message if the action fails'
     value: ${{ steps.action.outputs.error-message }}
 
 runs:
-  using: composite
+  using: "composite"
   steps:
-    - name: Action Name
+    - name: Delete Tag
       id: action
       shell: pwsh
-      run: |        
-        . "${{ github.action_path }}/action.ps1"
-        run_action `
-          -Input1 "${{ inputs.input-1 }}" `
-          -Input2 "${{ inputs.input-2 }}" `
-          -Inpute3 "${{ inputs.input-3 }}" `
-      
+      run: |
+        Import-Module "${{ github.action_path }}/modules/Remove-GitTag.psm1"        
+        Remove-GitTag `
+          -RepoName "${{ inputs.repo-name }}" `
+          -OrgName "${{ inputs.org-name }}" `
+          -TagName "${{ inputs.tag-name }}" `
+          -Token "${{ inputs.token }}"
