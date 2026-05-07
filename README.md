@@ -1,54 +1,62 @@
-# GitHub Action
+# Delete Git Tag from Repository GitHub Action
 
-Description of what the GitHub Action does.
+This GitHub Action deletes a git tag from your repository using the GitHub REST API and PowerShell.  
+It is designed to be simple, composable, and independent of the local git state.
 
 ## Features
-- Feature #1
-- Feature #2
-- Feature #3
+
+- Deletes a tag from your repository via the REST API (no dependencies on local git or CLI).
+- Lets you specify the tag name, organization, and repository.
+- Fully supports GitHub Organizations and user-owned repositories.
+- Outputs the tag deletion result and error message (if any) for use in subsequent workflow steps.
+- Designed for secure automation with the minimal required token permissions.
 
 ## Inputs
-| Name          | Description                                           | Required | Default |
-|---------------|-------------------------------------------------------|----------|---------|
-| `input-1`     | Description of input-1.                               | Yes      | N/A     |
-| `input-2`     | Description of input-2.                               | Yes      | N/A     |
-| `input-3`     | Description of input-3.                               | Yes      | N/A    |
+
+| Name        | Description                                | Required | Default |
+|-------------|--------------------------------------------|----------|---------|
+| `tag-name`  | Name of the tag to delete                  | Yes      |         |
+| `org-name`  | The name of the GitHub organization        | Yes      |         |
+| `repo-name` | The name of the repository                 | Yes      |         |
+| `token`     | GitHub token with access to Git tags       | Yes      |         |
 
 ## Outputs
-| Name           | Description                                                   |
-|----------------|---------------------------------------------------------------|
-| `result`       | Result of the action ("success" or "failure").                |
-| `error-message`| Error message if the action fails.                            |
+
+| Name            | Description                                                                                   |
+|-----------------|----------------------------------------------------------------------------------------------|
+| `result`        | Result of the attempt to delete the git tag (`success`, `not-found`, or `failure`)           |
+| `error-message` | Error message if the action fails                                                            |
 
 ## Usage
-1. **Add the Action to Your Workflow**:
-   Create or update a workflow file (e.g., `.github/workflows/your-action.yml`) in your repository.
 
-2. **Reference the Action**:
-   Use the action by referencing the repository and version (e.g., `v1`).
+Create a workflow file in your repository (e.g., `.github/workflows/delete-tag.yml`).  
+**Ensure you pass all required inputs and use a valid token with tag deletion access.**
 
-3. **Example Workflow**:
-   ```yaml
-   name: Your Action
-   on:
-     issues:
-       types: [labeled]
-   jobs:
-     open-issue:
-       runs-on: ubuntu-latest
-       steps:
-         - name: Run Action
-           id: open
-           uses: lee-lott-actions/your-action@v1
-           with:
-             input-1: '1'
-             input-2: '2'
-             input-3: '3'
-         - name: Print Result
-           run: |
-             if [[ "${{ steps.open.outputs.result }}" == "success" ]]; then
-               echo "Issue #${{ github.event.issue.number }} successfully opened."
-             else
-               echo "Error: ${{ steps.open.outputs.error-message }}"
-               exit 1
-             fi
+### Example Workflow
+
+```yaml
+name: Delete Git Tag
+on:
+  workflow_dispatch:
+
+jobs:
+  delete-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Delete Git Tag via API
+        id: delete-tag
+        uses: lee-lott-actions/delete-git-tag@v1
+        with:
+          tag-name: 'v1.0.0'
+          repo-name: ${{ github.event.repository.name }}
+          org-name: ${{ github.repository_owner }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Output Delete Result
+        run: |
+          echo "Delete Result: ${{ steps.delete-tag.outputs.result }}"
+          echo "Error Message: ${{ steps.delete-tag.outputs.error-message }}"
+```
