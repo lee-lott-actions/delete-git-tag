@@ -4,7 +4,7 @@ Describe "Remove-GitTag" {
     BeforeAll {
         $script:OrgName    = "my-org"
         $script:RepoName   = "my-repo"
-        $scriptTagName    = "v1.2.3"
+        $script:TagName    = "v1.2.3"
         $script:Token      = "test-token"
         $script:MockApiUrl  = "http://127.0.0.1:3000"
     }
