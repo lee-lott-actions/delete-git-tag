@@ -30,7 +30,7 @@ Describe "Resolve-TagRefSuccess" {
             
             $output = Get-Content $env:GITHUB_OUTPUT
             $output | Should -Contain "result=not-found"
-            $output | Where-Object { $_ -match "Warning: Tag '$TagName' does not exist.  Only tags starting with '$TagName' exist." } | Should -Not -BeNullOrEmpty
+            $output | Where-Object { $_ -match "Warning: Tag '$TagName' does not exist. Only tags starting with '$TagName' exist." } | Should -Not -BeNullOrEmpty
         }    
     }
 
@@ -85,7 +85,7 @@ Describe "Resolve-TagRefSuccess" {
         
                 $output = Get-Content $env:GITHUB_OUTPUT
                 $output | Should -Contain "result=failure"
-                $output | Where-Object { $_ -match "Error: Failed to delete tag '$TagName'. Status: 400. Message Something went wrong" } | Should -Not -BeNullOrEmpty
+                $output | Where-Object { $_ -match "Error: Failed to delete tag '$TagName'. Status: 400. Message: Something went wrong" } | Should -Not -BeNullOrEmpty
             }        
         }
     }
