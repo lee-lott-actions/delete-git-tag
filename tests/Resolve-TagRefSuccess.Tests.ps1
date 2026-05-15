@@ -4,22 +4,23 @@ Describe "Resolve-TagRefSuccess" {
      BeforeAll {
         $script:OrgName    = "my-org"
         $script:RepoName   = "my-repo"
-        $scriptTagName    = "v1.2.3"
+        $script:TagName    = "v1.2.3"
         $script:headers    = @{ Authorization = "Bearer dummy-token" }
-        $script:MockApiUrl  = "http://127.0.0.1:3000/repos/my-org/my-repo/git/refs/tags/v1.2.3"        
+        $script:MockApiUrl  = "http://127.0.0.1:3000"
     }
     
     BeforeEach {
         $env:GITHUB_OUTPUT = New-TemporaryFile
         $env:MOCK_API = $script:MockApiUrl
+        $refUrl = $env:MOCK_API + "/repos/my-org/my-repo/git/refs/tags/v1.2.3"
     }
 
     AfterEach {
         if (Test-Path $env:GITHUB_OUTPUT) { Remove-Item $env:GITHUB_OUTPUT }
-        Remove-Variable -Name MOCK_API -Scope Global -ErrorAction SilentlyContinue
+        Remove-Variable -Name env:MOCK_API -Scope Global -ErrorAction SilentlyContinue
     }
 
-    Context "Exact Git Tag Match Not Found" {
+    Context "Multiple Git Tag Matches Found" {
         It "unit: Resolve-TagRefSuccess finds multiple refs but not an exact match for the TagName" {
             $content = @(
                 @{ ref = "refs/tags/v1.2.3-SNAPSHOT" },
@@ -29,7 +30,7 @@ Describe "Resolve-TagRefSuccess" {
             
             $output = Get-Content $env:GITHUB_OUTPUT
             $output | Should -Contain "result=not-found"
-            $output | Where-Object { $_ -match "Warning: Tag '$TagName' does not exist.  Only tags staring with '$TagName' exist." } | Should -Not -BeNullOrEmpty
+            $output | Where-Object { $_ -match "Warning: Tag '$TagName' does not exist.  Only tags starting with '$TagName' exist." } | Should -Not -BeNullOrEmpty
         }    
     }
 
@@ -84,7 +85,7 @@ Describe "Resolve-TagRefSuccess" {
         
                 $output = Get-Content $env:GITHUB_OUTPUT
                 $output | Should -Contain "result=failure"
-                $output | Where-Object { $_ -match "Error: Failed to delete tag '$TagName'. Status: 400. Message Something went wrong" } | Should -Not -BeNulOrEmpty
+                $output | Where-Object { $_ -match "Error: Failed to delete tag '$TagName'. Status: 400. Message Something went wrong" } | Should -Not -BeNullOrEmpty
             }        
         }
     }
