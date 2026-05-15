@@ -34,7 +34,10 @@ function Resolve-TagRefSuccess {
         } else {
             $msg = ""
             if ($delResp.Content) {
-                try { $msg = ($delResp.Content | ConvertFrom-Json).message } catch {}
+                try { $msg = ($delResp.Content | ConvertFrom-Json).message
+                } catch {
+                    $msg = $delResp.Content
+                }
             }
 
             $errorMsg = "Error: Failed to delete tag '$TagName'. Status: $($delResp.StatusCode)."
