@@ -9,16 +9,16 @@ Describe "Resolve-TagRefSuccess" {
         $script:MockApiUrl  = "http://127.0.0.1:3000"
     }
     
-    BeforeEach {
-        $env:GITHUB_OUTPUT = New-TemporaryFile
-        $env:MOCK_API = $script:MockApiUrl
-        $refUrl = $env:MOCK_API + "/repos/my-org/my-repo/git/refs/tags/v1.2.3"
-    }
+     BeforeEach {
+         $env:GITHUB_OUTPUT = (New-TemporaryFile).FullName
+         $env:MOCK_API = $script:MockApiUrl
+         $refUrl = $env:MOCK_API + "/repos/my-org/my-repo/git/refs/tags/v1.2.3"
+     }
 
-    AfterEach {
-        if (Test-Path $env:GITHUB_OUTPUT) { Remove-Item $env:GITHUB_OUTPUT }
-        Remove-Variable -Name env:MOCK_API -Scope Global -ErrorAction SilentlyContinue
-    }
+     AfterEach {
+         if (Test-Path $env:GITHUB_OUTPUT) { Remove-Item $env:GITHUB_OUTPUT }
+         Remove-Item Env:MOCK_API -ErrorAction SilentlyContinue
+     }
 
     Context "Multiple Git Tag Matches Found" {
         It "unit: Resolve-TagRefSuccess finds multiple refs but not an exact match for the TagName" {
