@@ -48,7 +48,7 @@ function Remove-GitTag {
   
     if ($getResp.StatusCode -eq 200) {
       $content = $getResp.Content | ConvertFrom-Json
-      Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $refUrl -headers $headers
+      Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $uri -headers $headers
     } elseif ($getResp.StatusCode -eq 404) {
       $errorMsg = "Warning: Tag '$TagName' does not exist on $OrgName/$RepoName."
       Add-Content -Path $env:GITHUB_OUTPUT -Value "result=not-found"
