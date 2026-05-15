@@ -12,7 +12,7 @@ Describe "Resolve-TagRefSuccess" {
      BeforeEach {
          $env:GITHUB_OUTPUT = (New-TemporaryFile).FullName
          $env:MOCK_API = $script:MockApiUrl
-         $refUrl = $env:MOCK_API + "/repos/my-org/my-repo/git/refs/tags/v1.2.3"
+         $script:refUrl = $env:MOCK_API + "/repos/my-org/my-repo/git/refs/tags/v1.2.3"
      }
 
      AfterEach {
@@ -26,7 +26,7 @@ Describe "Resolve-TagRefSuccess" {
                 @{ ref = "refs/tags/v1.2.3-SNAPSHOT" },
                 @{ ref = "refs/tags/v1.2.3-alpha" }
             )
-            Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $refUrl -headers $headers
+            Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $script:refUrl -headers $headers
             
             $output = Get-Content $env:GITHUB_OUTPUT
             $output | Should -Contain "result=not-found"
@@ -44,7 +44,7 @@ Describe "Resolve-TagRefSuccess" {
                 Mock Invoke-WebRequest {
                     [PSCustomObject]@{ StatusCode = 204; Content = "" }
                 } -Verifiable -ModuleName Resolve-TagRefSuccess
-                Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $refUrl -headers $headers
+                Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $script:refUrl -headers $headers
         
                 $output = Get-Content $env:GITHUB_OUTPUT
                 $output | Should -Contain "result=success"
@@ -55,7 +55,7 @@ Describe "Resolve-TagRefSuccess" {
             It "unit: Resolve-TagRefSuccess returns failure for null DELETE response" {
                 Mock Invoke-WebRequest { return $null } -Verifiable -ModuleName Resolve-TagRefSuccess
         
-                Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $refUrl -headers $headers
+                Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $script:refUrl -headers $headers
         
                 $output = Get-Content $env:GITHUB_OUTPUT
                 $output | Should -Contain "result=failure"
@@ -68,7 +68,7 @@ Describe "Resolve-TagRefSuccess" {
                     [PSCustomObject]@{ StatusCode = 422; Content = $errorMsgJson }
                 } -ModuleName Resolve-TagRefSuccess
                 
-                Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $refUrl -headers $headers
+                Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $script:refUrl -headers $headers
             
                 $output = Get-Content $env:GITHUB_OUTPUT
                 $output | Should -Contain "result=failure"
@@ -81,7 +81,7 @@ Describe "Resolve-TagRefSuccess" {
                     [PSCustomObject]@{ StatusCode = 400; Content = $errorMsg }
                 } -ModuleName Resolve-TagRefSuccess
                 
-                Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $refUrl -headers $headers
+                Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $script:refUrl -headers $headers
         
                 $output = Get-Content $env:GITHUB_OUTPUT
                 $output | Should -Contain "result=failure"
@@ -94,7 +94,7 @@ Describe "Resolve-TagRefSuccess" {
         It "unit: Resolve-TagRefSuccess does not find a match" {
             $content = @{ ref = "refs/tags/other-tag" }
             
-            Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $refUrl -headers $headers
+            Resolve-TagRefSuccess -content $content -TagName $TagName -OrgName $OrgName -RepoName $RepoName -refUrl $script:refUrl -headers $headers
     
             $output = Get-Content $env:GITHUB_OUTPUT
             $output | Should -Contain "result=not-found"
