@@ -11,7 +11,7 @@ function Resolve-TagRefSuccess {
     # If it's an array (multiple refs found), tag does not exist exactly
     if ($content -is [System.Collections.IEnumerable] -and
         -not ($content.PSObject.TypeNames -contains "System.Collections.Hashtable")) {
-        $errorMsg = "Tag '$TagName' does not exist—only tags starting with '$TagName' exist."
+        $errorMsg = "Warning: Tag '$TagName' does not exist. Only tags starting with '$TagName' exist."
         Add-Content -Path $env:GITHUB_OUTPUT -Value "result=not-found"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "error-message=$errorMsg"
         Write-Host $errorMsg
