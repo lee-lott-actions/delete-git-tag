@@ -127,7 +127,7 @@ Describe "Remove-GitTag" {
             
             $output = Get-Content $env:GITHUB_OUTPUT
             $output | Should -Contain "result=failure"
-            $output | Where-Object { $_ -match "error-message=Delete Git Tag threw an exception and failed." } | Should -Not -BeNullOrEmpty
+            $output | Where-Object { $_ -match "error-message=Error: Failed to delete tag. Exception:" } | Should -Not -BeNullOrEmpty
         }
     }
 }
