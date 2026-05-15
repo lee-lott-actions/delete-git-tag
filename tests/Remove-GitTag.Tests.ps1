@@ -50,7 +50,7 @@ Describe "Remove-GitTag" {
     
             $output = Get-Content $env:GITHUB_OUTPUT
             $output | Should -Contain "result=not-found"
-            $output | Should -Contain "error-message=Tag '$TagName' not found."
+            $output | Should -Contain "error-message=Warning: Tag '$TagName' does not exist on $OrgName/$RepoName."
         }
     
         It "unit: Remove-GitTag fails with HTTP 500" {
@@ -63,7 +63,7 @@ Describe "Remove-GitTag" {
     
             $output = Get-Content $env:GITHUB_OUTPUT
             $output | Should -Contain "result=failure"
-            $output | Where-Object { $_ -match "error-message=Delete Git Tag: unexpected status 500" } | Should -Not -BeNullOrEmpty
+            $output | Where-Object { $_ -match "error-message=Error: Failed to delete tag. Status: 500" } | Should -Not -BeNullOrEmpty
         }
     
         It "unit: Remove-GitTag fails for null GET response" {
@@ -74,7 +74,7 @@ Describe "Remove-GitTag" {
     
             $output = Get-Content $env:GITHUB_OUTPUT
             $output | Should -Contain "result=failure"
-            $output | Where-Object { $_ -match "Failed contacting GitHub API for tag check." } | Should -Not -BeNullOrEmpty
+            $output | Where-Object { $_ -match "Error: Failed contacting GitHub API for tag check." } | Should -Not -BeNullOrEmpty
         }    
     }
 
@@ -127,7 +127,7 @@ Describe "Remove-GitTag" {
             
 			$output = Get-Content $env:GITHUB_OUTPUT
 			$output | Should -Contain "result=failure"
-			$output | Where-Object { $_ -match "^error-message=Error: Failed to delete tag.. Exception:" } |
+			$output | Where-Object { $_ -match "^error-message=Error: Failed to delete tag. Exception:" } |
 				Should -Not -BeNullOrEmpty
         }
     }
