@@ -18,7 +18,7 @@ function Resolve-TagRefSuccess {
     }
     # If there is an exact match, proceed to delete
     elseif ($content.ref -eq "refs/tags/$TagName") {
-        $delResp = Invoke-WebRequest -Uri $refUrl -Headers $headers -Method Delete
+        $delResp = Invoke-WebRequest -Uri $refUrl -Headers $headers -Method Delete -SkipHttpErrorCheck
 
         if ($null -eq $delResp) {
             $errorMsg = "Error: Failed contacting GitHub API for tag deletion."
