@@ -36,7 +36,7 @@ function Remove-GitTag {
     $safeTagName = [uri]::EscapeDataString($TagName)
     $uri = "$githubApiUrl/repos/$OrgName/$RepoName/git/refs/tags/$safeTagName"
   
-    $getResp = Invoke-WebRequest -Uri $uri -Headers $headers -Method Get
+    $getResp = Invoke-WebRequest -Uri $uri -Headers $headers -Method Get -SkipHttpErrorCheck
   
     if ($null -eq $getResp) {
       $errorMsg = "Error: Failed contacting GitHub API for tag check."
